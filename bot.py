@@ -101,7 +101,7 @@ def channel_entries(raw):
                 result.append({
                     "chat": target,
                     "url": f"https://t.me/{username}",
-                    "label": target,
+                    "label": "اول" if len(result) == 0 else ("دوم" if len(result) == 1 else str(len(result) + 1)),
                 })
 
         elif re.fullmatch(r"-100\d+", target):
@@ -116,7 +116,7 @@ def channel_entries(raw):
             result.append({
                 "chat": target,
                 "url": url,
-                "label": target,
+                "label": "اول" if len(result) == 0 else ("دوم" if len(result) == 1 else str(len(result) + 1)),
             })
 
     return result
@@ -213,7 +213,7 @@ async def send_novel(update, context, nid):
             if channel["url"]:
                 buttons.append([
                     InlineKeyboardButton(
-                        "عضویت در کانال " + channel["label"],
+                        "📢 عضویت در کانال " + channel["label"],
                         url=channel["url"],
                     )
                 ])
@@ -701,7 +701,7 @@ async def handle_message(
         context.user_data.clear()
 
         await message.reply_text(
-         "فایل رمان به‌روزرسانی شد.",
+            "فایل رمان به‌روزرسانی شد.",
             reply_markup=admin_keyboard(),
         )
 
@@ -724,7 +724,7 @@ async def handle_message(
         context.user_data.clear()
 
         await message.reply_text(
-   "کانال‌های اجباری به‌روزرسانی شد.",
+            "کانال‌های اجباری به‌روزرسانی شد.",
             reply_markup=admin_keyboard(),
         )
 
@@ -765,5 +765,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
 
+            
