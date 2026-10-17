@@ -701,7 +701,7 @@ async def handle_message(
         context.user_data.clear()
 
         await message.reply_text(
-            "فایل رمان به‌روزرسانی شد.",
+         "فایل رمان به‌روزرسانی شد.",
             reply_markup=admin_keyboard(),
         )
 
@@ -724,4 +724,46 @@ async def handle_message(
         context.user_data.clear()
 
         await message.reply_text(
-            "کانال‌های اجباری به‌روزرسا
+   "کانال‌های اجباری به‌روزرسانی شد.",
+            reply_markup=admin_keyboard(),
+        )
+
+    else:
+        context.user_data.clear()
+        await message.reply_text(
+            "عملیات نامعتبر بود؛ دوباره از پنل مدیریت شروع کن.",
+            reply_markup=admin_keyboard(),
+        )
+
+
+async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if is_admin(update):
+        await update.effective_message.reply_text(
+            "از دکمه‌های پنل مدیریت استفاده کن.",
+            reply_markup=admin_keyboard(),
+        )
+
+
+def main():
+    if not TOKEN:
+        raise RuntimeError("متغیر BOT_TOKEN در تنظیمات محیطی تعریف نشده است.")
+
+    init_db()
+    app = Application.builder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("admin", start))
+    app.add_handler(CallbackQueryHandler(callback))
+    app.add_handler(MessageHandler(filters.COMMAND, unknown_command))
+    app.add_handler(
+        MessageHandler(filters.TEXT | filters.Document.ALL, handle_message)
+    )
+
+    logging.info("ChaosPDFBot is starting...")
+    app.run_polling()
+
+
+if __name__ == "__main__":
+    main()
+    
+
