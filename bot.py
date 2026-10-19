@@ -188,22 +188,39 @@ async def send_novel(update, context, nid):
     channels = parse_saved_channels(raw_channels)
     missing = []
 
-    for channel in channels:
+        for channel in channels:
         try:
             member = await context.bot.get_chat_member(
                 chat_id=channel["chat"],
                 user_id=update.effective_user.id,
             )
 
-            if member.status in ("left", "kicked", "banned"):
+            status = member.status
+
+            if status in ("left", "kicked"):
                 missing.append(channel)
 
-        except Exception:
+            elif status == "restricted":
+                if not getattr(member, "is_member", False):
+                    missing.append(channel)
+
+            elif status not in ("creator", "administrator", "member"):
+                logging.warning(
+                    "Unknown membership status for channel %s: %s",
+                    channel["chat"],
+                    status,
+                )
+                missing.append(channel)
+
+        except Exception as exc:
             logging.exception(
-                "Membership check failed for %s",
+                "Membership check failed for channel %s. "
+                "User ID: %s. Error: %s",
                 channel["chat"],
+                update.effective_user.id,
+                exc,
             )
-            # اگر عضویت قابل بررسی نباشد، دسترسی داده نمی‌شود.
+            # در صورت بروز خطا، رفتار قبلی حفظ می‌شود.
             missing.append(channel)
 
     if missing:
