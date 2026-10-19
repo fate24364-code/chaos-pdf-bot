@@ -188,7 +188,7 @@ async def send_novel(update, context, nid):
     channels = parse_saved_channels(raw_channels)
     missing = []
 
-        for channel in channels:
+    for channel in channels:
         try:
             member = await context.bot.get_chat_member(
                 chat_id=channel["chat"],
@@ -212,15 +212,13 @@ async def send_novel(update, context, nid):
                 )
                 missing.append(channel)
 
-        except Exception as exc:
+        except Exception:
             logging.exception(
-                "Membership check failed for channel %s. "
-                "User ID: %s. Error: %s",
+                "Membership check failed for channel %s. User ID: %s",
                 channel["chat"],
                 update.effective_user.id,
-                exc,
             )
-            # در صورت بروز خطا، رفتار قبلی حفظ می‌شود.
+            # اگر عضویت قابل بررسی نباشد، دسترسی داده نمی‌شود.
             missing.append(channel)
 
     if missing:
@@ -711,7 +709,7 @@ async def handle_message(
             return
 
         update_novel(
-            context.user_data["nid"],
+               context.user_data["nid"],
             "file_id",
             document.file_id,
         )
@@ -782,5 +780,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+    
             
